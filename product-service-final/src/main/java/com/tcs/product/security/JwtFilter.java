@@ -23,17 +23,73 @@ public class JwtFilter extends OncePerRequestFilter {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, 
+//                                    HttpServletResponse response, 
+//                                    FilterChain filterChain) throws ServletException, IOException {
+//    	String path = request.getRequestURI();
+//    	if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+//    	    filterChain.doFilter(request, response);
+//    	    return;
+//    	}
+//
+//        String authHeader = request.getHeader("Authorization");
+//
+//        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+//            String token = authHeader.substring(7);
+//
+//            try {
+//                Claims claims = Jwts.parserBuilder()
+//                        .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+//                        .build()
+//                        .parseClaimsJws(token)
+//                        .getBody();
+//
+//                String email = claims.getSubject();
+//
+//                if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//
+//                    UsernamePasswordAuthenticationToken authToken =
+//                            new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
+//
+//                    SecurityContextHolder.getContext().setAuthentication(authToken);
+//                }
+//
+//            } catch (Exception e) {
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.getWriter().write("Invalid or expired token.");
+//                return;
+//            }
+//        } else {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.getWriter().write("Authorization header missing or invalid.");
+//            return;
+//        }
+//
+//        filterChain.doFilter(request, response);
+//    }
+    
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request, 
                                     HttpServletResponse response, 
                                     FilterChain filterChain) throws ServletException, IOException {
 
+    	 String path = request.getRequestURI();
+
+    	    // ✅ Allow all public paths through (no token required)
+    	    if (path.startsWith("/v3/api-docs")
+    	        || path.startsWith("/swagger-ui")
+    	        || path.startsWith("/product/products")) {
+    	        filterChain.doFilter(request, response);
+    	        return;
+    	    }
+
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-
             try {
+                String token = authHeader.substring(7);
                 Claims claims = Jwts.parserBuilder()
                         .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
                         .build()
@@ -41,26 +97,26 @@ public class JwtFilter extends OncePerRequestFilter {
                         .getBody();
 
                 String email = claims.getSubject();
-
                 if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
-
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Invalid or expired token.");
                 return;
             }
         } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Authorization header missing or invalid.");
-            return;
+            // ✅ Reject only if secured endpoints
+            if (path.startsWith("/product/admin")) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Authorization header missing or invalid.");
+                return;
+            }
         }
 
         filterChain.doFilter(request, response);
     }
+
 }

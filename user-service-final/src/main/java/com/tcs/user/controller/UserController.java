@@ -19,8 +19,10 @@ import com.tcs.user.security.AuthRequest;
 import com.tcs.user.security.JwtUtil;
 import com.tcs.user.service.UserService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
+@SecurityRequirement(name="bearerAuth")
 @RestController
 @RequestMapping("/user")
 public class UserController {

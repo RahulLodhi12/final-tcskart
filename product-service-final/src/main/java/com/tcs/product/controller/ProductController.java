@@ -9,6 +9,8 @@ import com.tcs.product.exception.ImageFormatException;
 import com.tcs.product.security.JwtUtil;
 import com.tcs.product.service.ProductService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
+@SecurityRequirement(name="bearerAuth")
 @RestController
 @RequestMapping("/product")
 public class ProductController {
@@ -33,8 +36,8 @@ public class ProductController {
 	@Autowired
 	ProductService productService;
 	
-	@Autowired
-	JwtUtil jwtUtil;
+//	@Autowired
+//	JwtUtil jwtUtil;
 	
 	@GetMapping("/products") 
 	public Page<Product> getAllProducts(@RequestHeader("Authorization") String authHeader,@RequestParam Integer page, @RequestParam Integer size){
@@ -81,14 +84,14 @@ public class ProductController {
 		productService.uploadProductImages(id,url);
 	}
 	
-	@GetMapping("/myproduct")
-    public ResponseEntity<?> getMyCart(@RequestHeader("Authorization") String authHeader) {
-
-        String token = authHeader.substring(7); 
-        String email = jwtUtil.extractEmail(token);
-
-        return ResponseEntity.ok("Fetching cart for: " + email);
-    }
+//	@GetMapping("/myproduct")
+//    public ResponseEntity<?> getMyCart(@RequestHeader("Authorization") String authHeader) {
+//
+//        String token = authHeader.substring(7); 
+//        String email = jwtUtil.extractEmail(token);
+//
+//        return ResponseEntity.ok("Fetching cart for: " + email);
+//    }
 	
 	
 }
