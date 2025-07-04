@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 
 
 //@SecurityRequirement(name="bearerAuth")
@@ -72,8 +73,8 @@ public class ProductController {
 	
 	@Operation(summary = "Add Product")
 	@PostMapping("/admin/addProduct")
-	public Product addNewProducts(@RequestBody Product product) {
-		return productService.addNewProduct(product);
+	public Product addNewProducts(@RequestBody Product product, @RequestParam List<String> img) throws ImageFormatException {
+		return productService.addNewProduct(product,img);
 	}
 	
 	@Operation(summary = "Delete Product By Id")

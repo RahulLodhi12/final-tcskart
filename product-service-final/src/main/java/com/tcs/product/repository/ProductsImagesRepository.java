@@ -11,4 +11,6 @@ public interface ProductsImagesRepository extends JpaRepository<ProductImage, In
 
 	List<ProductImage> findByProductProductId(Long productId);
 
+//	void save(List<ProductImage> piList);
+
 }

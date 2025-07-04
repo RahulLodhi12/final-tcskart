@@ -1,5 +1,6 @@
 package com.tcs.product.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +25,25 @@ public class ProductService {
 	@Autowired
 	ProductsImagesRepository productImageRepo;
 	
-	public Product addNewProduct(Product product) {
-		return productRepoitory.save(product);
+	public Product addNewProduct(Product product, List<String> urls) throws ImageFormatException {
+		Product saveP = productRepoitory.save(product);
+		
+			for(String u: urls) {
+				if(!(u.contains(".jpg") || u.contains(".png"))) {
+					System.out.println("Not uploaded..Only jpg and png format Allowed..");
+					throw new ImageFormatException("Only jpg and png format Allowed..");
+				}
+				
+				ProductImage newProductImage = new ProductImage(); //new Object
+				newProductImage.setProduct(saveP);
+				newProductImage.setUrl(u);
+				
+//				productImageList.add(newProductImage);
+				
+				productImageRepo.save(newProductImage);
+			}
+	
+		return saveP;
 	}
 	
 	public String updateProduct(Long id, Product product, String imageUrl, int imgId) throws ImageFormatException {
