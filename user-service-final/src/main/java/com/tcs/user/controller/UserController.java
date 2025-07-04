@@ -19,6 +19,7 @@ import com.tcs.user.security.AuthRequest;
 import com.tcs.user.security.JwtUtil;
 import com.tcs.user.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
@@ -39,11 +40,13 @@ public class UserController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Operation(summary = "User Registeration")
 	@PostMapping("/register")
 	public User registerUser(@RequestBody User user) {
 		return service.registerUser(user);
 	}
 
+	@Operation(summary = "User Login")
 	@PostMapping("/authenticate")
 	public ResponseEntity<String> authenticate(@RequestBody AuthRequest request) {
 
@@ -57,6 +60,7 @@ public class UserController {
 		return ResponseEntity.status(401).body("Invalid Credentials");
 	}
 
+	@Operation(summary = "Welcom User..!")
 	@GetMapping("/user")
 	public String welcomeUser(@RequestHeader("Authorization") String authHeader) {
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -67,6 +71,7 @@ public class UserController {
 		return authHeader;
 	}
 
+	
 	@GetMapping("/welcome")
 	public String welcome() {
 		return "Welcome! This is a secured endpoint.";
@@ -78,6 +83,7 @@ public class UserController {
 		return service.getallUsers();
 	}
 
+	@Operation(summary = "Update User Details")
 	@PutMapping("/update")
 	public ResponseEntity<String> updateUser(@RequestHeader("Authorization") String authHeader,
 			@Valid @RequestBody User user) {
@@ -88,6 +94,7 @@ public class UserController {
 		return ResponseEntity.ok("User updation failed!");
 	}
 
+	@Operation(summary = "User Logout")
 	@GetMapping("/lgt")
 	public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
 	    if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -97,6 +104,8 @@ public class UserController {
 	    }
 	    return ResponseEntity.badRequest().body("No valid token provided.");
 }
+	
+	@Operation(summary = "Forget Password")
 	@PutMapping("/authenticate/forgot")
 	public ResponseEntity<String> updatePassword(@RequestBody AuthRequest user) {
 		Boolean org_User = service.updatePassword(user);

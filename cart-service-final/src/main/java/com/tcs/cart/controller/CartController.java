@@ -20,6 +20,8 @@ import com.tcs.cart.security.JwtUtil;
 import com.tcs.cart.service.CartService;
 import com.tcs.cart.service.ReviewService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/cart")
 public class CartController {
@@ -33,6 +35,7 @@ public class CartController {
 	@Autowired
     private JwtUtil jwtUtil;
 	
+	@Operation(summary = "Add Review By Product Id")
 	@PostMapping("products/reviews/{productId}")
 	public ResponseEntity<String> addReview(@RequestHeader("Authorization") String authHeader, @PathVariable Long productId, @RequestParam Double rating,@RequestParam String review) {
 		String token = authHeader.substring(7);
@@ -43,7 +46,7 @@ public class CartController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Review cannot be added");
 	}
 	
-	
+	@Operation(summary = "Add Product to WishList By Product Id")
 	@PutMapping("/wishlists/{productId}")
 	public ResponseEntity<String> addWishlist(@RequestHeader("Authorization") String authHeader, @PathVariable Long productId) {
 		String token = authHeader.substring(7);
@@ -54,6 +57,8 @@ public class CartController {
 	    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("wishlist cannot be added");
 		
 	}
+	
+	@Operation(summary = "Remove Product From WishList By Product Id")
 	@DeleteMapping("/wishlists/{productId}")
 	public ResponseEntity<String> removeWishlist(@RequestHeader("Authorization") String authHeader, @PathVariable Long productId) {
 		String token = authHeader.substring(7);
@@ -64,6 +69,8 @@ public class CartController {
 	    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("wishlist cannot be deleted");
 		
 	}
+	
+	@Operation(summary = "Update Cart Item Quantity By Product Id")
 	@PutMapping("/carts/{productId}") //update the cart increment the quantity by 1
 	public ResponseEntity<String> updatecartItemQuantity(@RequestHeader("Authorization") String authHeader, @PathVariable Long productId, @RequestParam Integer quantity ) {
 		String token = authHeader.substring(7);
@@ -75,7 +82,7 @@ public class CartController {
 		
 	}
 	
-		
+	@Operation(summary = "Remove Product From Cart Item By Product Id")
 	@DeleteMapping("/carts/{productId}")//delete the cart item by customer id and product id
 	public ResponseEntity<String> deletecartItem(@RequestHeader("Authorization") String authHeader, @PathVariable Long productId ) {
 		String token = authHeader.substring(7);
@@ -86,6 +93,8 @@ public class CartController {
 	    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("deletion failed!!");
 		
 	}
+	
+	@Operation(summary = "Get All Cart Items")
 	@GetMapping("/carts")// get all the items by customerId from cart
 	public ResponseEntity<Optional<Cart>> getAllcartItemsByCustomerId(@RequestHeader("Authorization") String authHeader) {
 		String token = authHeader.substring(7);
@@ -95,6 +104,8 @@ public class CartController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 
 	}
+	
+	@Operation(summary = "Remove All Items From Cart")
 	@DeleteMapping("/carts")// delete all the items by customer id from cart
 	public ResponseEntity<String> clearCart(@RequestHeader("Authorization") String authHeader) {
 		String token = authHeader.substring(7);
@@ -105,6 +116,7 @@ public class CartController {
 	    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("deletion failed!!");
 	}
 	
+	@Operation(summary = "Add Product to Cart By Product Id")
 	@PostMapping("/carts/{productId}")
 	ResponseEntity<String> addProductToCart(@RequestHeader("Authorization") String authHeader, @PathVariable Long productId) { 
 		String token = authHeader.substring(7);
@@ -116,6 +128,7 @@ public class CartController {
 		
 	}
 	
+	@Operation(summary = "Place Order")
 	@PostMapping("/carts/orders")
 	ResponseEntity<String> placeOrder(@RequestHeader("Authorization") String authHeader) {
 		String token = authHeader.substring(7);
@@ -138,6 +151,7 @@ public class CartController {
 		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
+	
 	@GetMapping("/my")
     public ResponseEntity<String> getMyNewCart() {
 

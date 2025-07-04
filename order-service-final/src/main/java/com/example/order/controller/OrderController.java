@@ -18,6 +18,7 @@ import com.example.order.entity.Orders;
 import com.example.order.security.JwtUtil;
 import com.example.order.service.OrderService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 
@@ -31,6 +32,7 @@ public class OrderController {
 	@Autowired
 	JwtUtil jwtUtil;
 	
+	@Operation(summary = "Place Order")
 	@PostMapping("/placeorder")
 	public Orders PlaceOrder(@RequestHeader("Authorization") String authHeader,@RequestBody OrderBean orderdto)
 	{
@@ -39,17 +41,23 @@ public class OrderController {
 	      return  services.PlaceOrder(orderdto,email);
 			
 	}
+	
+	@Operation(summary = "Get All Orders By Email")
 	@GetMapping("/users")
 	 public List<Orders> getOrdersByEmail(@RequestHeader("Authorization") String authHeader) {
 		String token = authHeader.substring(7);
 		String email = jwtUtil.extractEmail(token);  
 		return services.getOrdersByUserEmail(email);
 	 }
+	
+	@Operation(summary = "Get All Orders")
 	@GetMapping("/allorders")
 	 public List<Orders> getAllOrders() {
 	       return services.getallorders();
 	       
 	 }
+	
+	@Operation(summary = "Get My Cart")
 	@GetMapping("/myorder")
     public ResponseEntity<?> getMyCart(@RequestHeader("Authorization") String authHeader) {
 
@@ -59,11 +67,14 @@ public class OrderController {
         // Now use email as needed
         return ResponseEntity.ok("Fetching cart for: " + email);
     }
+	
+	@Operation(summary = "Change Status")
 	@PatchMapping("/admin/updateStatus/{id}/{status}")
 	public String changeStatus(@PathVariable Long id,@PathVariable String status)
 	{
 		return services.updateStatus(id, status);
 	}
+	
 //	@GetMapping("/carttomoveorder/{email}/{address}")
 //	public Orders carttoMoveOrder(@PathVariable String email,@PathVariable  String address)
 //	{
